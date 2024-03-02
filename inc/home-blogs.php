@@ -39,7 +39,7 @@ if ( $the_query->have_posts() ) {
                 ?>
 
                 <div class="small">
-                    <?php echo vdberita_limit_text(strip_tags(get_the_excerpt()), 20); ?>
+                    <?php echo vd_limit_text(strip_tags(get_the_excerpt()), 20); ?>
                 </div>
 
             <?php if (has_post_thumbnail( $post->ID ) ): ?>

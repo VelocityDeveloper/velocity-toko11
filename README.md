@@ -1,5 +1,5 @@
-Velocity Child Berita 15
+Velocity Child Toko 11
 =================
 
-Child Theme for Berita 15.
+Child Theme for Toko 11.
 

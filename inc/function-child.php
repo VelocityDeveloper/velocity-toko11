@@ -123,13 +123,13 @@ if (!function_exists('justg_header_close')) {
 }
 
 ///add action builder part
-add_action('justg_header', 'justg_header_berita');
-function justg_header_berita()
+add_action('justg_header', 'justg_header_toko11');
+function justg_header_toko11()
 {
 	require_once(get_stylesheet_directory() . '/inc/part-header.php');
 }
-add_action('justg_do_footer', 'justg_footer_berita');
-function justg_footer_berita()
+add_action('justg_do_footer', 'justg_footer_toko11');
+function justg_footer_toko11()
 {
 	require_once(get_stylesheet_directory() . '/inc/part-footer.php');
 }
@@ -196,7 +196,7 @@ if (!function_exists('justg_right_sidebar_check')) {
     }
 }
 
-function vdberita_limit_text($text, $limit)
+function vd_limit_text($text, $limit)
 {
 	if (str_word_count($text, 0) > $limit) {
 		$words = str_word_count($text, 2);

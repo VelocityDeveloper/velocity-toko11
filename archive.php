@@ -78,7 +78,7 @@ $container = velocitytheme_option('justg_container_type', 'container');
                                         </div>
 
                                         <div>
-                                            <?php echo vdberita_limit_text(strip_tags(get_the_excerpt()), 25); ?>
+                                            <?php echo vd_limit_text(strip_tags(get_the_excerpt()), 25); ?>
                                         </div>
 
                                     <?php if (has_post_thumbnail( $post->ID ) ): ?>
