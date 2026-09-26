@@ -11,93 +11,6 @@ add_action('after_setup_theme', 'velocitychild_theme_setup', 9);
 function velocitychild_theme_setup()
 {
 
-	if (class_exists('Kirki')) :
-
-		Kirki::add_panel('panel_toko11', [
-			'priority'    => 10,
-			'title'       => esc_html__('Toko 11', 'justg'),
-			'description' => esc_html__('', 'justg'),
-		]);
-
-        // section title_tagline
-        Kirki::add_section('title_tagline', [
-            'panel'    => 'panel_toko11',
-            'title'    => __('Site Identity', 'justg'),
-            'priority' => 10,
-        ]);
-        // section title_tagline
-        Kirki::add_section('header_image', [
-            'panel'    => 'panel_toko11',
-            'title'    => __('Header Image', 'justg'),
-            'priority' => 10,
-        ]);
-
-
-		///Section Color
-		Kirki::add_section('section_colorweb', [
-			'panel'    => 'panel_toko11',
-			'title'    => __('Warna', 'justg'),
-			'priority' => 10,
-		]);
-		new \Kirki\Field\Background(
-			[
-				'settings'    => 'background_website',
-				'label'       => esc_html__('Background', 'justg'),
-				'description' => esc_html__('', 'justg'),
-				'section'     => 'section_colorweb',
-				'default'     => [
-					'background-color'      => '#558884',
-					'background-image'      => '',
-					'background-repeat'     => 'repeat',
-					'background-position'   => 'center center',
-					'background-size'       => 'cover',
-					'background-attachment' => 'scroll',
-				],
-				'transport'   => 'auto',
-				'output'      => [
-					[
-						'element'   => ':root[data-bs-theme=light] body',
-					],
-				],
-			]
-		);
-
-		///Section Home
-		Kirki::add_section('section_homeweb', [
-			'panel'    => 'panel_toko11',
-			'title'    => __('Home', 'justg'),
-			'priority' => 10,
-		]);
-        new \Kirki\Field\Repeater(
-            [
-                'settings' => 'slider_home',
-                'label'    => esc_html__('Slider Home', 'justg'),
-                'section'  => 'section_homeweb',
-                'priority' => 10,
-                'row_label'    => [
-                    'type'  => 'field',
-                    'value' => esc_html__('Slider', 'justg'),
-                ],
-                'button_label' => esc_html__('Tambah', 'justg'),
-                'fields'   => [
-                    'imgslider'   => [
-                        'type'        => 'image',
-                        'label'       => esc_html__('Gambar', 'justg'),
-                        'description' => esc_html__('', 'justg'),
-                        'default'     => '',
-                    ],
-                ],
-            ]
-        );
-
-
-		// remove panel in customizer 
-		Kirki::remove_panel('global_panel');
-		Kirki::remove_panel('panel_header');
-		Kirki::remove_panel('panel_footer');
-		Kirki::remove_control('display_header_text');
-
-	endif;
 
 	//remove action from Parent Theme
 	remove_action('justg_header', 'justg_header_menu');
@@ -147,6 +60,26 @@ function justg_after_wrapper_content()
     echo '</div>';
 }
 
+/**
+ * Halaman Katalog & Profil Saya VD Store (Pengaturan VD Store > Halaman, halaman ber-[wp_store_catalog]
+ * / [wp_store_profile], atau template katalog tema) selalu tampil penuh tanpa sidebar.
+ */
+function velocity_toko11_halaman_penuh()
+{
+    if (!is_page()) {
+        return false;
+    }
+    $s = (array) get_option('wp_store_settings', []);
+    foreach (['page_catalog', 'page_profile'] as $kunci) {
+        if (!empty($s[$kunci]) && is_page((int) $s[$kunci])) {
+            return true;
+        }
+    }
+    $isi = (string) get_post_field('post_content', get_queried_object_id());
+    return has_shortcode($isi, 'wp_store_catalog') || has_shortcode($isi, 'wp_store_profile')
+        || strpos((string) get_page_template_slug(), 'katalog') !== false;
+}
+
 if (!function_exists('justg_right_sidebar_check')) {
     /**
      * Right sidebar check
@@ -160,7 +93,7 @@ if (!function_exists('justg_right_sidebar_check')) {
         $archives_sidebar_pos   = velocitytheme_option('justg_archives_sidebar_position');
         $shop_sidebar_pos       = velocitytheme_option('justg_shop_sidebar_position', 'default');
 
-        if ($sidebar_pos === 'disable') {
+        if ($sidebar_pos === 'disable' || velocity_toko11_halaman_penuh()) {
             return;
         }
 
@@ -204,29 +137,4 @@ function vd_limit_text($text, $limit)
 		$text  = substr($text, 0, $pos[$limit]) . '...';
 	}
 	return $text;
-}
-
-remove_action('velocitytoko_product_loop', 'velocitytoko_content_product',20);
-add_action('velocitytoko_product_loop','velocitytoko11_content_product',30);
-function velocitytoko11_content_product($post){
-    ?>
-    <article <?php post_class('col-xl-3 col-md-4 col-6 mb-2'); ?> id="post-<?php the_ID(); ?>">
-        <div class="card h-100 card-product shadow-sm border-0 overflow-hidden">
-            <?php echo do_shortcode("[thumbnail width='170' height='200' crop='false' upscale='true']"); ?>
-            <div class="card-body text-center position-relative pb-5">
-				<a class="d-block mb-2" style="min-height:3rem;" href="<?php echo get_the_permalink(); ?>">
-					<?php echo get_the_title(); ?>
-				</a>
-				<div class="fw-bold mb-2">
-					<?php echo do_shortcode("[harga]"); ?>
-				</div>
-				<div class="position-absolute end-0 start-0 bottom-0 p-3 text-center">
-					<a class="btn btn-sm btn-primary border-theme bg-theme shadow-sm" href="<?php echo get_the_permalink(); ?>">
-						Detail
-					</a>
-				</div>
-            </div>
-        </div>
-    </article><!-- #post-## -->
-    <?php
 }
